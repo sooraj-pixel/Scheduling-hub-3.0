@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".", // This is common in Next.js for absolute imports
+    "paths": {
+      "@/*": ["./*"] // This maps "@/" to your project root, allowing imports like '@/lib/db'
+    }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"],
+  "exclude": ["node_modules"]
+}
