@@ -1,0 +1,191 @@
+/* app/calendar/calendar-overrides.css */
+
+/* --- GENERAL CALENDAR STRUCTURE & APPEARANCE (SAFE TO APPLY GLOBALLY) --- */
+
+/* Overall calendar container height. Essential for Flexbox layouts. */
+.rbc-calendar {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Enables vertical scrolling for the time grid portion (applies to week and day views). */
+.rbc-time-content {
+  overflow-y: auto;
+}
+
+/* Adjusts width for the time labels column (e.g., "8 AM", "9 AM"). */
+/* Applies to both week and day views. */
+.rbc-time-header-content {
+  min-width: 80px; /* Give enough space for time labels */
+}
+
+/* Styles the time labels themselves. */
+.rbc-time-header .rbc-label {
+  font-size: 0.85rem;
+  padding-right: 5px;
+}
+
+/* --- REACT BIG CALENDAR DEFAULT POPUP STYLING (.rbc-overlay) --- */
+/* These styles apply to the pop-up that appears when an event is clicked. */
+/* They are general and apply uniformly across ALL views (Month, Week, Day). */
+.rbc-overlay {
+  max-height: 400px; /* Max height for the popup */
+  overflow-y: auto;  /* Add scroll if content exceeds max-height */
+  background-color: white;
+  border: 1px solid #ccc;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  border-radius: 8px;
+  padding: 10px;
+  z-index: 1000; /* Ensure popup is on top */
+  max-width: 350px; /* Limit popup width */
+  min-width: 250px; /* Minimum popup width */
+}
+
+/* Styling for individual events *within* the popup overlay. */
+/* Ensures text wraps and events stack clearly inside the popup. */
+.rbc-overlay .rbc-event {
+  white-space: normal !important; /* Force text to wrap inside popup */
+  height: auto !important; /* Allow height to adjust to content */
+  margin-bottom: 5px !important; /* Spacing between events in popup */
+  line-height: 1.4 !important; /* Better line spacing for readability */
+  /* IMPORTANT: Reset positioning and display for natural flow within the popup */
+  position: static !important;
+  width: auto !important;
+  display: block !important;
+  /* Visual cleanup for events inside the popup */
+  box-shadow: none !important;
+  border: none !important;
+  background-color: transparent !important; /* Transparent background in popup */
+  color: #333 !important; /* Standard dark text color */
+  padding: 0 !important;
+  font-size: 0.95rem !important;
+  font-weight: normal !important;
+}
+
+/* Styling for the text content within the event in the popup. */
+.rbc-overlay .rbc-event-content {
+    font-weight: bold; /* Make main title part bolder */
+    white-space: normal; /* Ensure title wraps */
+    display: block; /* Ensure it's a block element */
+    margin-bottom: 5px; /* Space below title */
+    color: #0056b3; /* A distinguishing color for the title */
+}
+
+
+/* --- DAY VIEW SPECIFIC EVENT DISPLAY STYLES & HORIZONTAL EXTENSION --- */
+/* These styles are highly specific and will ONLY affect the layout and display */
+/* of events AND THE WIDTH OF THE DAY VIEW columns. */
+
+/* CRITICAL: Make the day column wider in the day view */
+/* This will force the entire day view to stretch horizontally and may introduce a scrollbar */
+.rbc-time-view.rbc-day-view .rbc-day-slot {
+  min-width: 800px; /* Adjust this value to control how wide each day column is */
+  /* The default width is usually flexible. Setting a min-width will force it wider. */
+}
+
+/* Ensure the total width of the calendar grid stretches to accommodate the wider columns */
+.rbc-time-view.rbc-day-view .rbc-time-header-content,
+.rbc-time-view.rbc-day-view .rbc-time-content {
+    min-width: unset; /* Reset any previous min-width */
+    width: 100%; /* Allow these containers to grow to fit content */
+}
+
+
+/* Target the container for events within each time slot *specifically in DAY VIEW*. */
+/* This is the core rule that forces events to stack vertically instead of overlapping. */
+.rbc-time-view.rbc-day-view .rbc-time-slot .rbc-events-container {
+    display: flex;
+    flex-direction: column; /* CRITICAL: Forces vertical stacking */
+    flex: 1; /* Allows container to fill available vertical space */
+    position: relative; /* Provides context for children */
+    width: 100%; /* Ensures container uses full width of its slot */
+}
+
+/* Target the actual event blocks *within DAY VIEW time slots*. */
+/* These rules override React Big Calendar's default absolute positioning for events in the time grid, */
+/* allowing them to participate in the flexbox stacking defined above. */
+.rbc-time-view.rbc-day-view .rbc-time-slot .rbc-event {
+  position: relative !important; /* Force relative positioning for stacking */
+  width: auto !important; /* Allow event to take natural width */
+  left: 0 !important; /* Remove fixed left positioning */
+  right: 0 !important; /* Remove fixed right positioning */
+  margin-right: 5px !important; /* Add a small margin on the right for spacing */
+  z-index: 10; /* Ensure events are above grid lines */
+  /* Ensure readability within the day view grid cell itself */
+  min-height: 25px !important; /* Minimum height for clickability and content */
+  padding: 2px 5px !important;
+  font-size: 0.75rem !important;
+  line-height: 1.2 !important;
+  white-space: normal !important; /* Allow text to wrap within the event box */
+  overflow: hidden !important; /* Hide overflow to prevent events from spilling visually outside */
+  text-overflow: ellipsis !important; /* Add ellipsis if content still overflows after wrapping */
+  height: auto !important; /* Allow height to expand as needed for wrapped text */
+  box-sizing: border-box !important;
+  display: flex !important; /* Ensure content is laid out correctly */
+  align-items: center !important;
+  justify-content: flex-start !important;
+  border-radius: 4px; /* Maintain rounded corners */
+  border: 1px solid rgba(0,0,0,0.1); /* Subtle border for definition */
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05); /* Slight shadow */
+  cursor: pointer; /* Keep cursor pointer */
+  color: black; /* Default text color */
+  /* Adjust based on background color from event.color passed via eventPropGetter */
+  text-shadow: 0 0 2px rgba(255,255,255,0.7); /* Optional: text shadow for readability */
+}
+
+/* Styles for all-day events *specifically in DAY VIEW*. */
+/* Ensures multiple all-day events also stack vertically. */
+.rbc-time-view.rbc-day-view .rbc-allday-cell .rbc-row-bg + .rbc-row-content .rbc-events-container {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch; /* Stretch items to fill container width */
+}
+
+.rbc-time-view.rbc-day-view .rbc-allday-cell .rbc-event {
+    position: relative !important; /* Ensure they are positioned for stacking */
+    width: auto !important; /* Take full available width */
+    left: 0 !important; /* Remove fixed left positioning */
+    margin-right: 5px !important; /* Add some right margin */
+    margin-bottom: 2px; /* Small gap between all-day events */
+    white-space: normal !important; /* Ensure text wraps */
+    min-height: 20px;
+    padding: 2px 5px;
+    font-size: 0.75rem;
+    line-height: 1.2;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Add ellipsis if needed */
+    box-sizing: border-box;
+    border-radius: 4px;
+    border: 1px solid rgba(0,0,0,0.1);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    cursor: pointer;
+    color: black;
+    text-shadow: 0 0 2px rgba(255,255,255,0.7);
+}
+
+/* --- Month View Specific (No layout changes, just general appearance or height) --- */
+/* This is typically safe as it mostly affects the cell dimensions, not event positioning, */
+/* and will allow the default "+X more" to function correctly. */
+.rbc-month-row {
+  min-height: 120px; /* Give month cells more height to show a few events + 'more' link */
+}
+
+/* Styling for the "+X more" link in month view. */
+.rbc-show-more {
+  background-color: #f0f0f0;
+  color: #337ab7;
+  font-size: 0.8em;
+  text-align: center;
+  cursor: pointer;
+  padding: 2px 0;
+  border-radius: 4px;
+  margin-top: 2px;
+}
+
+/* Ensure default RBL event styling for month/week view does not get completely overridden */
+/* This is crucial for the '+X more' behavior. We only apply general aesthetic here. */
+.rbc-event {
+    /* Only apply general aesthetic properties here, NOT layout/positioning */
+    font-weight: bold; /* Make the title bold in the cell */
+}
